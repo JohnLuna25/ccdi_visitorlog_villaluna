@@ -70,17 +70,20 @@ $conn->close();
 <div class="header">
     <h1>CCDI Visitor Log</h1>
 </div>
-<a href="../cvl_login_page/cvl_logout.php" class="logout-button">Logout</a>
+<a href="../cvl_login_page/cvl_login.php" class="logout-button">Logout</a>
 
 <div class="main-content">
-    <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
 
     <!-- Statistics -->
-    <div class="stats">
-        <p>Total Visitors Today: <?php echo $totalVisitors; ?></p>
-        <p>Students who took Exam: <?php echo $totalExam; ?></p>
-        <p>Others: <?php echo $totalOthers; ?></p>
+    <div class="header-stats">
+        <div class="welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</div>
+        <div class="stats">
+            <p>Total Visitors Today: <?php echo $totalVisitors; ?></p>
+            <p>Students who took Exam: <?php echo $totalExam; ?></p>
+            <p>Others: <?php echo $totalOthers; ?></p>
+        </div>
     </div>
+
 
     <!-- Success message -->
     <?php if(!empty($success)): ?>

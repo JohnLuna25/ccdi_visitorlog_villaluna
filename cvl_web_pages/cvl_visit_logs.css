@@ -49,20 +49,31 @@ body {
 }
 
 .main-content {
-    width: 100%;
-    margin-top: 20px;
-    margin-left: 20px; 
-    margin-right: 20px;
-    padding: 40px;
+    width: 90%;
+    margin: 20px auto; 
+    color: #fff;
+}
+
+.header-stats {
+    display: flex;
+    align-items: center;     /* vertically center welcome and stats */
+    justify-content: center; /* center horizontally in the page */
+    gap: 30px;               /* space between welcome and stats */
+    margin-bottom: 20px;
+    flex-wrap: wrap;         /* wraps if screen too small */
+}
+
+.header-stats .welcome {
+    font-size: 18px;
+    font-weight: bold;
     color: #fff;
 }
 
 .stats {
     display: flex;          
-    gap: 30px;              
+    gap: 15px;              
     align-items: center;    
-    margin-bottom: 20px;
-    flex-wrap: wrap;        
+    margin: 0;        
 }
 
 .stats p {
@@ -73,7 +84,6 @@ body {
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
     margin: 0;              
 }
-
 /* Table */
 .main-content table {
     width: 100%;

@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once '../cvl_functionsAndDB/cvl_db_connect.php';
-require_once '../cvl_functionsAndDB/cvl_add_visitor.php';
+require_once '../cvl_functionsAndDB/cvl_add_visitor.php'; // Add Visitor functionality
 
 $errors = [];
 $success = '';
@@ -14,17 +13,15 @@ if (empty($_SESSION['username'])) {
 
 // Handle Add Visitor form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_visitor'])) {
-    $result = add_visitor(
-        $conn,
-        trim($_POST['full_name']),
-        trim($_POST['address']),
-        trim($_POST['contact']),
-        trim($_POST['school']),
-        trim($_POST['purpose_of_visit'])
-    );
+    $full_name = trim($_POST['full_name']);
+    $address = trim($_POST['address']);
+    $contact = trim($_POST['contact']);
+    $school = trim($_POST['school']);
+    $purpose_of_visit = trim($_POST['purpose_of_visit']);
 
-    $errors = $result['errors'];
+    $result = add_visitor($conn, $full_name, $address, $contact, $school, $purpose_of_visit);
     $success = $result['success'];
+    $errors = $result['errors'];
 }
 
 // Export CSV
@@ -60,7 +57,6 @@ $totalOthers = $totalVisitors - $totalExam;
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,27 +69,11 @@ $conn->close();
 
 <div class="header">
     <h1>CCDI Visitor Log</h1>
-    <a href="../cvl_login_page/cvl_logout.php" class="logout-button">Logout</a>
 </div>
-
-<div class="sidebar">
-    <h2>Dashboard</h2>
-    <ul>
-        <li><a href="cvl_visit_logs.php">Visit Logs</a></li>
-        <li><a href="cvl_statistics.php">Statistics</a></li>
-        <li><a href="cvl_settings.php">Settings</a></li>
-    </ul>
-</div>
+<a href="../cvl_login_page/cvl_logout.php" class="logout-button">Logout</a>
 
 <div class="main-content">
     <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
-
-    <!-- Success message on main page -->
-    <?php if($success): ?>
-        <div style="color:green; text-align:center; margin-bottom:15px;">
-            <?php echo $success; ?>
-        </div>
-    <?php endif; ?>
 
     <!-- Statistics -->
     <div class="stats">
@@ -102,19 +82,19 @@ $conn->close();
         <p>Others: <?php echo $totalOthers; ?></p>
     </div>
 
+    <!-- Success message -->
+    <?php if(!empty($success)): ?>
+        <div id="successMsg" style="color:green; text-align:center;"><?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
+
     <!-- Add Visitor Button -->
     <button id="addVisitorBtn" class="popup-btn">Add Visitor</button>
 
-    <!-- Popup Form -->
+    <!-- Add Visitor Modal -->
     <div id="visitorModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
         <h3 style="text-align: center">Add New Visitor</h3>
-        <?php if($errors): ?>
-            <div style="color:red;">
-                <?php foreach($errors as $e) echo htmlspecialchars($e).'<br>'; ?>
-            </div>
-        <?php endif; ?>
         <form method="post">
             <input type="hidden" name="add_visitor" value="1">
             <label>Full Name*: </label>
@@ -133,6 +113,34 @@ $conn->close();
                 <option value="visit">Visit</option>
             </select><br><br>
             <button type="submit">Add Visitor</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Visitor Modal -->
+    <div id="editVisitorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="editClose">&times;</span>
+        <h3 style="text-align: center">Edit Visitor</h3>
+        <form method="post" id="editVisitorForm" action="../cvl_functionsAndDB/cvl_edit_delete.php">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="id" id="edit_id">
+            <label>Full Name*: </label>
+            <input type="text" name="full_name" id="edit_full_name" required><br>
+            <label>Contact #: </label>
+            <input type="text" name="contact" id="edit_contact"><br>
+            <label>Address: </label>
+            <input type="text" name="address" id="edit_address"><br>
+            <label>School/Office: </label>
+            <input type="text" name="school" id="edit_school"><br>
+            <label>Purpose*: </label>
+            <select name="purpose_of_visit" id="edit_purpose" required>
+                <option value="">--Select--</option>
+                <option value="inquiry">Inquiry</option>
+                <option value="exam">Exam</option>
+                <option value="visit">Visit</option>
+            </select><br><br>
+            <button type="submit">Save Changes</button>
         </form>
       </div>
     </div>
@@ -157,60 +165,65 @@ $conn->close();
             <td><?php echo htmlspecialchars($row['address']); ?></td>
             <td><?php echo htmlspecialchars($row['school']); ?></td>
             <td><?php echo htmlspecialchars($row['purpose_of_visit']); ?></td>
-            
-            <!-- Actions column -->
             <td>
-                <form method="post" action="edit_visitor.php" style="display:inline;">
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <button type="submit" class="action-btn edit">Edit</button>
-                </form>
-                <form method="post" action="delete_visitor.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this visitor?');">
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <button type="submit" class="action-btn delete">Delete</button>
-                </form>
+                <button class="action-btn edit" onclick="openEditModal(<?php echo $row['id']; ?>)">Edit</button>
+                <button class="action-btn delete" onclick="confirmDelete(<?php echo $row['id']; ?>)">Delete</button>
             </td>
-
         </tr>
         <?php endwhile; ?>
-
     </table>
 
-    <!-- Export CSV -->
     <br>
     <a href="?export_csv=1">Export Today's Visitors to CSV</a>
 </div>
 
 <script>
-// Modal JS
+// Add Visitor Modal
 const modal = document.getElementById("visitorModal");
 const btn = document.getElementById("addVisitorBtn");
-const span = document.getElementsByClassName("close")[0];
+const span = modal.getElementsByClassName("close")[0];
+btn.onclick = () => modal.style.display = "block";
+span.onclick = () => modal.style.display = "none";
+window.onclick = (event) => { if(event.target == modal) modal.style.display = "none"; }
 
-// Open modal
-btn.onclick = function() {
-  modal.style.display = "block";
+// Edit Visitor Modal
+const editModal = document.getElementById("editVisitorModal");
+const editClose = document.getElementById("editClose");
+
+function openEditModal(id){
+    fetch('../cvl_functionsAndDB/cvl_edit_delete.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: 'action=get&id=' + id
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('edit_id').value = data.id;
+        document.getElementById('edit_full_name').value = data.full_name;
+        document.getElementById('edit_contact').value = data.contact;
+        document.getElementById('edit_address').value = data.address;
+        document.getElementById('edit_school').value = data.school;
+        document.getElementById('edit_purpose').value = data.purpose_of_visit;
+        editModal.style.display = 'block';
+    });
 }
 
-// Close modal when X clicked
-span.onclick = function() {
-  modal.style.display = "none";
-}
+editClose.onclick = () => editModal.style.display = 'none';
+window.onclick = (event) => { if(event.target == editModal) editModal.style.display = 'none'; }
 
-// Close modal when clicking outside content
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-
-// Hide success message after 5 seconds
-setTimeout(function() {
-    const msg = document.getElementById('successMessage');
-    if(msg) {
-        msg.style.display = 'none';
+// Delete confirmation
+function confirmDelete(id){
+    if(confirm('Are you sure you want to delete this visitor?')){
+        window.location.href = '../cvl_functionsAndDB/cvl_edit_delete.php?action=delete&id=' + id;
     }
-}, 5000); // 5 seconds
+}
+
+// Success message for 5s
+const successDiv = document.getElementById("successMsg");
+if(successDiv){
+    setTimeout(()=>{ successDiv.style.display = "none"; }, 5000);
+}
 </script>
+
 </body>
 </html>
-

@@ -1,14 +1,13 @@
+/* General Styles */
 body {
     background-color: #7065eb;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    justify-content: center;
-    align-items: center;
 }
 
 .header {
-    background-color: #ffffff;
+    background-color: #e6e159;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     padding: 20px;
     width: 100%;
@@ -16,6 +15,23 @@ body {
     margin-bottom: 20px;
 }
 
+.logout-button {
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    background-color: #4a3fff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #392acc;
+}
+
+/* Sidebar */
 .sidebar {
     position: relative;
     background-color: #e6e159;
@@ -29,48 +45,24 @@ body {
     color: rgb(0, 0, 0);
     border: 3px solid #000;
     box-sizing: border-box;
-}
-
-
-
-.sidebar,
-.main-content {
-    float: left;
-}
-
-
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    margin: 15px 0;
-}
-
-.sidebar ul li a {
-    color: white;
-    text-decoration: none;
-}
-
-.sidebar ul li a:hover {
-    text-decoration: underline;
+    border-bottom-right-radius: 50px;
 }
 
 .main-content {
-
-    width: 80%;
-    margin-top: -750px;
-    margin-left: 220px;
-    padding: 20px;
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 20px; 
+    margin-right: 20px;
+    padding: 40px;
     color: #fff;
 }
 
 .stats {
+    display: flex;          
+    gap: 30px;              
+    align-items: center;    
     margin-bottom: 20px;
-    display: flex;
-    gap: 20px;
+    flex-wrap: wrap;        
 }
 
 .stats p {
@@ -79,6 +71,7 @@ body {
     padding: 10px 15px;
     border-radius: 8px;
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    margin: 0;              
 }
 
 /* Table */
@@ -118,10 +111,10 @@ tr.row-head th {
 
 tr.table-content td {
     text-align: center;
-    vertical-align: middle; /* optional: vertically center content */
+    vertical-align: middle; 
 }
 
-/* Add Visitor Popup */
+/* Buttons */
 .popup-btn {
     background-color: #4a3fff;
     color: white;
@@ -136,6 +129,32 @@ tr.table-content td {
     background-color: #392acc;
 }
 
+.action-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    margin: 0 2px;
+}
+
+.action-btn.edit {
+    background-color: #ffc107;
+}
+
+.action-btn.edit:hover {
+    background-color: #e0a800;
+}
+
+.action-btn.delete {
+    background-color: #dc3545;
+}
+
+.action-btn.delete:hover {
+    background-color: #c82333;
+}
+
+/* Modal */
 .modal {
     display: none;
     position: fixed;

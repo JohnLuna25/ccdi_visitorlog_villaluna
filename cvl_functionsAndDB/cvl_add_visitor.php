@@ -1,38 +1,44 @@
 <?php
 // cvl_add_visitor.php
+include 'cvl_db_connect.php';
 
 /**
  * Adds a new visitor to the database.
  *
- * @param mysqli $conn Database connection
- * @param string $full_name Visitor full name
- * @param string $address Visitor address
- * @param string $contact Visitor contact number
- * @param string $school Visitor school/office
- * @param string $purpose_of_visit Purpose of visit
- * @return array ['success' => string, 'errors' => array]
+ * @param mysqli $conn
+ * @param string $full_name
+ * @param string $address
+ * @param string $contact
+ * @param string $school
+ * @param string $purpose_of_visit
+ * @return array ['success'=>string, 'errors'=>array]
  */
 function add_visitor($conn, $full_name, $address, $contact, $school, $purpose_of_visit) {
     $errors = [];
     $success = '';
 
-    // Validate required fields
     if (!$full_name || !$purpose_of_visit) {
         $errors[] = 'Please fill in the required fields: Full Name and Purpose of Visit.';
     } else {
         $stmt = $conn->prepare("INSERT INTO cvl_visitor_info (full_name, address, contact, school, purpose_of_visit) VALUES (?, ?, ?, ?, ?)");
-        if (!$stmt) {
-            $errors[] = "Database prepare error: " . $conn->error;
+        if(!$stmt){
+            $errors[] = "Prepare failed: ".$conn->error;
         } else {
             $stmt->bind_param("sssss", $full_name, $address, $contact, $school, $purpose_of_visit);
-            if ($stmt->execute()) {
+            if($stmt->execute()){
                 $success = 'Visitor added successfully!';
             } else {
-                $errors[] = 'Error adding visitor: ' . $stmt->error;
+                $errors[] = 'Execute failed: '.$stmt->error;
             }
             $stmt->close();
         }
     }
 
-    return ['success' => $success, 'errors' => $errors];
+    return ['success'=>$success, 'errors'=>$errors];
 }
+
+// If you want it to handle POST automatically
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_visitor'])){
+    extract(add_visitor($conn, $_POST['full_name'], $_POST['address'], $_POST['contact'], $_POST['school'], $_POST['purpose_of_visit']));
+}
+?>

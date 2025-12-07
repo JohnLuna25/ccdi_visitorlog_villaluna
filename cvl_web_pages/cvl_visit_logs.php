@@ -1,6 +1,10 @@
 <?php
 session_start();
-include '../cvl_functionsAndDB/cvl_db_connect.php';
+require_once '../cvl_functionsAndDB/cvl_db_connect.php';
+require_once '../cvl_functionsAndDB/cvl_add_visitor.php';
+
+$errors = [];
+$success = '';
 
 // Redirect to login if not logged in
 if (empty($_SESSION['username'])) {
@@ -8,28 +12,19 @@ if (empty($_SESSION['username'])) {
     exit;
 }
 
-// Add new visitor
-$errors = [];
-$success = '';
+// Handle Add Visitor form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_visitor'])) {
-    $full_name = trim($_POST['full_name']);
-    $address = trim($_POST['address']);
-    $contact = trim($_POST['contact']);
-    $school = trim($_POST['school']);
-    $purpose_of_visit = trim($_POST['purpose_of_visit']);
+    $result = add_visitor(
+        $conn,
+        trim($_POST['full_name']),
+        trim($_POST['address']),
+        trim($_POST['contact']),
+        trim($_POST['school']),
+        trim($_POST['purpose_of_visit'])
+    );
 
-    if (!$full_name || !$purpose_of_visit) {
-        $errors[] = 'Please fill in the required fields: Full Name and Purpose of Visit.';
-    } else {
-        $stmt = $conn->prepare("INSERT INTO cvl_visitor_info (full_name,address,contact,school,purpose_of_visit) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sssss", $full_name, $address, $contact, $school, $purpose_of_visit);
-        if ($stmt->execute()) {
-            $success = 'Visitor added successfully!';
-        } else {
-            $errors[] = 'Error adding visitor.';
-        }
-        $stmt->close();
-    }
+    $errors = $result['errors'];
+    $success = $result['success'];
 }
 
 // Export CSV
@@ -93,6 +88,13 @@ $conn->close();
 <div class="main-content">
     <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
 
+    <!-- Success message on main page -->
+    <?php if($success): ?>
+        <div style="color:green; text-align:center; margin-bottom:15px;">
+            <?php echo $success; ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Statistics -->
     <div class="stats">
         <p>Total Visitors Today: <?php echo $totalVisitors; ?></p>
@@ -107,14 +109,11 @@ $conn->close();
     <div id="visitorModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h3>Add New Visitor</h3>
+        <h3 style="text-align: center">Add New Visitor</h3>
         <?php if($errors): ?>
             <div style="color:red;">
                 <?php foreach($errors as $e) echo htmlspecialchars($e).'<br>'; ?>
             </div>
-        <?php endif; ?>
-        <?php if($success): ?>
-            <div style="color:green;"><?php echo $success; ?></div>
         <?php endif; ?>
         <form method="post">
             <input type="hidden" name="add_visitor" value="1">
@@ -203,7 +202,15 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
-</script>
 
+// Hide success message after 5 seconds
+setTimeout(function() {
+    const msg = document.getElementById('successMessage');
+    if(msg) {
+        msg.style.display = 'none';
+    }
+}, 5000); // 5 seconds
+</script>
 </body>
 </html>
+

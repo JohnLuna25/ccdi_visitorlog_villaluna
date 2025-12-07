@@ -2,6 +2,16 @@
 // cvl_add_visitor.php
 include 'cvl_db_connect.php';
 
+
+
+
+
+
+/* This is a PHPDoc comment that explains the function below.
+ It tells developers what the function does, what inputs it expects, 
+ and what it returns. It does NOT execute any code itself.
+*/
+
 /**
  * Adds a new visitor to the database.
  *
@@ -37,7 +47,7 @@ function add_visitor($conn, $full_name, $address, $contact, $school, $purpose_of
     return ['success'=>$success, 'errors'=>$errors];
 }
 
-// If you want it to handle POST automatically
+// Fo haandle POST automatically
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_visitor'])){
     extract(add_visitor($conn, $_POST['full_name'], $_POST['address'], $_POST['contact'], $_POST['school'], $_POST['purpose_of_visit']));
 }

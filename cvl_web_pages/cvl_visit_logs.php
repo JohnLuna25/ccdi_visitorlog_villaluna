@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once '../cvl_functionsAndDB/cvl_add_visitor.php'; // Add Visitor functionality
-
+require_once '../cvl_functionsAndDB/cvl_add_visitor.php'; 
 $errors = [];
 $success = '';
 
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_visitor'])) {
     $errors = $result['errors'];
 }
 
-// Export CSV
+// CSV Exporter
 if (isset($_GET['export_csv'])) {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="visitors_'.date('Y-m-d').'.csv"');
@@ -67,14 +66,14 @@ $conn->close();
 </head>
 <body>
 
-<div class="header">
-    <h1>CCDI Visitor Log</h1>
-</div>
-<a href="../cvl_login_page/cvl_login.php" class="logout-button">Logout</a>
+    <div class="header">
+        <h1>CCDI Visitor Log</h1>
+    </div>
+    <a href="../cvl_login_page/cvl_login.php" class="logout-button">Logout</a>
 
-<div class="main-content">
+    <div class="main-content">
 
-    <!-- Statistics -->
+    <!-- Mini Statistics Bar kinda -->
     <div class="header-stats">
         <div class="welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</div>
         <div class="stats">
@@ -85,7 +84,7 @@ $conn->close();
     </div>
 
 
-    <!-- Success message -->
+    <!-- Success message if Successful -->
     <?php if(!empty($success)): ?>
         <div id="successMsg" style="color:green; text-align:center;"><?php echo htmlspecialchars($success); ?></div>
     <?php endif; ?>
@@ -93,7 +92,7 @@ $conn->close();
     <!-- Add Visitor Button -->
     <button id="addVisitorBtn" class="popup-btn">Add Visitor</button>
 
-    <!-- Add Visitor Modal -->
+    <!-- Modal forr Add Visitor -->
     <div id="visitorModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -120,7 +119,7 @@ $conn->close();
       </div>
     </div>
 
-    <!-- Edit Visitor Modal -->
+    <!-- Modal foor Edit Visitor -->
     <div id="editVisitorModal" class="modal">
       <div class="modal-content">
         <span class="close" id="editClose">&times;</span>
@@ -181,51 +180,52 @@ $conn->close();
 </div>
 
 <script>
-// Add Visitor Modal
-const modal = document.getElementById("visitorModal");
-const btn = document.getElementById("addVisitorBtn");
-const span = modal.getElementsByClassName("close")[0];
-btn.onclick = () => modal.style.display = "block";
-span.onclick = () => modal.style.display = "none";
-window.onclick = (event) => { if(event.target == modal) modal.style.display = "none"; }
 
-// Edit Visitor Modal
-const editModal = document.getElementById("editVisitorModal");
-const editClose = document.getElementById("editClose");
+    // Add Visitor Modal
+    const modal = document.getElementById("visitorModal");
+    const btn = document.getElementById("addVisitorBtn");
+    const span = modal.getElementsByClassName("close")[0];
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (event) => { if(event.target == modal) modal.style.display = "none"; }
 
-function openEditModal(id){
-    fetch('../cvl_functionsAndDB/cvl_edit_delete.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: 'action=get&id=' + id
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('edit_id').value = data.id;
-        document.getElementById('edit_full_name').value = data.full_name;
-        document.getElementById('edit_contact').value = data.contact;
-        document.getElementById('edit_address').value = data.address;
-        document.getElementById('edit_school').value = data.school;
-        document.getElementById('edit_purpose').value = data.purpose_of_visit;
-        editModal.style.display = 'block';
-    });
-}
+    // Edit Visitor Modal
+    const editModal = document.getElementById("editVisitorModal");
+    const editClose = document.getElementById("editClose");
 
-editClose.onclick = () => editModal.style.display = 'none';
-window.onclick = (event) => { if(event.target == editModal) editModal.style.display = 'none'; }
-
-// Delete confirmation
-function confirmDelete(id){
-    if(confirm('Are you sure you want to delete this visitor?')){
-        window.location.href = '../cvl_functionsAndDB/cvl_edit_delete.php?action=delete&id=' + id;
+    function openEditModal(id){
+        fetch('../cvl_functionsAndDB/cvl_edit_delete.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: 'action=get&id=' + id
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('edit_id').value = data.id;
+            document.getElementById('edit_full_name').value = data.full_name;
+            document.getElementById('edit_contact').value = data.contact;
+            document.getElementById('edit_address').value = data.address;
+            document.getElementById('edit_school').value = data.school;
+            document.getElementById('edit_purpose').value = data.purpose_of_visit;
+            editModal.style.display = 'block';
+        });
     }
-}
 
-// Success message for 5s
-const successDiv = document.getElementById("successMsg");
-if(successDiv){
-    setTimeout(()=>{ successDiv.style.display = "none"; }, 5000);
-}
+    editClose.onclick = () => editModal.style.display = 'none';
+    window.onclick = (event) => { if(event.target == editModal) editModal.style.display = 'none'; }
+
+    // Delete confirmation
+    function confirmDelete(id){
+        if(confirm('Are you sure you want to delete this visitor?')){
+            window.location.href = '../cvl_functionsAndDB/cvl_edit_delete.php?action=delete&id=' + id;
+        }
+    }
+
+    // Appear Success message for only 5s
+    const successDiv = document.getElementById("successMsg");
+    if(successDiv){
+        setTimeout(()=>{ successDiv.style.display = "none"; }, 5000);
+    }
 </script>
 
 </body>

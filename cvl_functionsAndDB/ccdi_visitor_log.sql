@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 07, 2025 at 02:04 PM
+-- Generation Time: Dec 07, 2025 at 03:53 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -62,7 +62,11 @@ CREATE TABLE `cvl_visitor_info` (
 
 INSERT INTO `cvl_visitor_info` (`id`, `full_name`, `address`, `contact`, `school`, `purpose_of_visit`, `created_at`) VALUES
 (8, 'John Villaluna', 'Sorsogon City, Sorsogon', '0956 677 7789', 'CCDI', 'exam', '2025-12-07 12:31:37'),
-(18, 'Kyle Desamparo', 'Sorsogon City, Sorsogon', '0976 655 4432', 'SSU', 'inquiry', '2025-12-07 12:35:31');
+(18, 'Kyle Desamparo', 'Sorsogon City, Sorsogon', '0976 655 4432', 'SSU', 'inquiry', '2025-12-07 12:35:31'),
+(19, 'Joe Guab', 'Sorsogon City, Sorsogon', '0946 677 7413', 'CCDI', 'exam', '2025-12-07 13:06:59'),
+(21, 'Dylan Ray Gonzalgo', 'Sorsogon City, Sorsogon', '0945 577 7487', 'SSU', 'visit', '2025-12-07 14:21:40'),
+(25, 'MJ Advincula', 'Sorsogon City, Sorsogon', '0948 877 7654', 'CCDI', 'exam', '2025-12-07 14:27:23'),
+(26, 'Paolo Funelas', 'Sorsogon City, Sorsogon', '0956 874 4785', 'CCDI', 'exam', '2025-12-07 14:53:26');
 
 --
 -- Indexes for dumped tables
@@ -95,7 +99,7 @@ ALTER TABLE `cvl_login_info`
 -- AUTO_INCREMENT for table `cvl_visitor_info`
 --
 ALTER TABLE `cvl_visitor_info`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

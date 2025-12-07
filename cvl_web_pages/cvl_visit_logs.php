@@ -77,15 +77,18 @@ $conn->close();
 <body>
 
     <div class="header">
-        <h1>CCDI Visitor Log</h1>
+        <h1 class="head-title">CCDI Visitor Log</h1>
     </div>
-    <a href="../cvl_login_page/cvl_login.php" class="logout-button">Logout</a>
+    
 
     <div class="main-content">
 
         <!-- Mini Statistics Bar -->
         <div class="header-stats">
-            <div class="welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</div>
+            <div class="welcome-container">
+                Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!
+            </div>
+
             <div class="stats">
                 <p>Total Visitors Today: <?php echo $totalVisitors; ?></p>
                 <p>Students who took Exam: <?php echo $totalExam; ?></p>
@@ -103,8 +106,7 @@ $conn->close();
             </div>
         <?php endif; ?>
 
-        <!-- Add Visitor Button -->
-        <button id="addVisitorBtn" class="popup-btn">Add Visitor</button>
+        
 
         <!-- Modal for Add Visitor -->
         <div id="visitorModal" class="modal">
@@ -161,36 +163,43 @@ $conn->close();
           </div>
         </div>
 
-        <!-- Visitor Table -->
-        <h3>Today's Visitors</h3>
-        <table>
-            <tr class="row-head">
-                <th>Date</th>
-                <th>Full Name</th>
-                <th>Contact #</th>
-                <th>Address</th>
-                <th>School/Office</th>
-                <th>Purpose</th>
-                <th>Actions</th>
-            </tr>
-           <?php while($row = $visitors_result->fetch_assoc()): ?>
-            <tr class="table-content">
-                <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
-                <td><?php echo htmlspecialchars($row['full_name']); ?></td>
-                <td><?php echo htmlspecialchars($row['contact']); ?></td>
-                <td><?php echo htmlspecialchars($row['address']); ?></td>
-                <td><?php echo htmlspecialchars($row['school']); ?></td>
-                <td><?php echo htmlspecialchars($row['purpose_of_visit']); ?></td>
-                <td>
-                    <button class="action-btn edit" onclick="openEditModal(<?php echo $row['id']; ?>)">Edit</button>
-                    <button class="action-btn delete" onclick="confirmDelete(<?php echo $row['id']; ?>)">Delete</button>
-                </td>
-            </tr>
-            <?php endwhile; ?>
-        </table>
+        <!-- Visitor Table Header -->
+<div class="visitors-header">
+    <h3>Today's Visitors</h3>
+    <button id="addVisitorBtn" class="popup-btn">Add Visitor</button>
+</div>
+
+<!-- Visitor Table -->
+<table>
+    <tr class="row-head">
+        <th>Date</th>
+        <th>Full Name</th>
+        <th>Contact #</th>
+        <th>Address</th>
+        <th>School/Office</th>
+        <th>Purpose</th>
+        <th>Actions</th>
+    </tr>
+    <?php while($row = $visitors_result->fetch_assoc()): ?>
+    <tr class="table-content">
+        <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
+        <td><?php echo htmlspecialchars($row['full_name']); ?></td>
+        <td><?php echo htmlspecialchars($row['contact']); ?></td>
+        <td><?php echo htmlspecialchars($row['address']); ?></td>
+        <td><?php echo htmlspecialchars($row['school']); ?></td>
+        <td><?php echo htmlspecialchars($row['purpose_of_visit']); ?></td>
+        <td>
+            <button class="action-btn edit" onclick="openEditModal(<?php echo $row['id']; ?>)">Edit</button>
+            <button class="action-btn delete" onclick="confirmDelete(<?php echo $row['id']; ?>)">Delete</button>
+        </td>
+    </tr>
+    <?php endwhile; ?>
+</table>
+
 
         <br>
-        <a href="?export_csv=1">Export Today's Visitors to CSV</a>
+        <a href="?export_csv=1" style="color: white">Export Today's Visitors to CSV</a>
+        <a href="../cvl_login_page/cvl_login.php" class="logout-button" style="text-decoration: none;">Logout</a>
     </div>
 
 <script>
@@ -240,6 +249,12 @@ $conn->close();
         setTimeout(()=>{ successDiv.style.display = "none"; }, 5000);
     }
 </script>
+
+<footer class="site-footer">
+    <p>© 2025 CCDI Sorsogon. All rights reserved.</p>
+    <p>Version 1.0.0</p>
+</footer>
+
 
 </body>
 </html>
